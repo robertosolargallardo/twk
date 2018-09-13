@@ -23,11 +23,12 @@ public:
     void pop(void);
     bool empty(void);
     void move(const int&);
-	 int less_than(const double&);
+    int less_than(const double&);
 
-	 int disp(void) const{
-		return(this->_disp);
-	 }
+    int disp(void) const
+    {
+        return(this->_disp);
+    }
     /**************/
     void show(void) const
     {

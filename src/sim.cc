@@ -14,37 +14,40 @@ void spmd(void)
     {
         simulator sim(comm);
 
-        std::mt19937 rng(time(0)); 
+        std::mt19937 rng(time(0));
         std::exponential_distribution<double> delay(1.0);
         std::uniform_int_distribution<int> proc(0,bsp_nprocs()-1);
         std::uniform_int_distribution<int> thread(0,omp_get_num_threads()-1);
         std::uniform_int_distribution<int> target(0,NUMBER_OF_LPS-1);
-        
-        for(int i=0;i<NUMBER_OF_LPS;++i){
-            for(int j=0;j<MESSAGE_DENSITY;++j){
-               json data;
-    	   		data["name"]="LP"+std::to_string(target(rng));
-               data["type"]="node";
-               data["number-of-lps"]=16;
-               data["message-density"]=32;
-					comm->send(std::make_shared<event>(0.0,delay(rng),0.0,bsp_pid(),omp_get_thread_num(),proc(rng),thread(rng),data));
 
+        for(int i=0; i<NUMBER_OF_LPS; ++i)
+            {
+                for(int j=0; j<MESSAGE_DENSITY; ++j)
+                    {
+                        json data;
+                        data["name"]="LP"+std::to_string(target(rng));
+                        data["type"]="node";
+                        data["number-of-lps"]=16;
+                        data["message-density"]=32;
+                        comm->send(std::make_shared<event>(0.0,delay(rng),0.0,bsp_pid(),omp_get_thread_num(),proc(rng),thread(rng),data));
+
+                    }
             }
-        }
         int k=MESSAGE_DENSITY/2+1;
 
-	     for(int i=0;i<10;++i){
-        		#pragma omp barrier
-        		#pragma omp master
-        		{
-	         	comm->send();
-            	bsp_sync();
-            	comm->recv();
-        		}
-        		#pragma omp barrier
+        for(int i=0; i<10; ++i)
+            {
+                #pragma omp barrier
+                #pragma omp master
+                {
+                    comm->send();
+                    bsp_sync();
+                    comm->recv();
+                }
+                #pragma omp barrier
 
-        		sim.run(k);
-		  }
+                sim.run(k);
+            }
     }
 
     bsp_end();
@@ -105,27 +108,29 @@ void test_comm(void)
     bsp_begin(bsp_nprocs());
     communicator comm(omp_get_max_threads());
 
-	 #pragma omp parallel shared(comm)
+    #pragma omp parallel shared(comm)
     {
-	 	 for(int i=0;i<bsp_nprocs();++i){
-			for(int j=0;j<omp_get_num_threads();++j){
-				uint64_t now=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    	   	json data;
-    	   	data["message"]=std::to_string(now)+" hello from proc "+std::to_string(bsp_pid())+" and thread "+std::to_string(omp_get_thread_num());
-				comm.send(std::make_shared<event>(0.0,0.0,0.0,bsp_pid(),omp_get_thread_num(),i,j,data));
-         }
-		 }
-	    #pragma omp barrier
-		 #pragma omp master
-       {
-	    	comm.send();
-         bsp_sync();
-         comm.recv();
-       }
-		 #pragma omp barrier
+        for(int i=0; i<bsp_nprocs(); ++i)
+            {
+                for(int j=0; j<omp_get_num_threads(); ++j)
+                    {
+                        uint64_t now=std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+                        json data;
+                        data["message"]=std::to_string(now)+" hello from proc "+std::to_string(bsp_pid())+" and thread "+std::to_string(omp_get_thread_num());
+                        comm.send(std::make_shared<event>(0.0,0.0,0.0,bsp_pid(),omp_get_thread_num(),i,j,data));
+                    }
+            }
+        #pragma omp barrier
+        #pragma omp master
+        {
+            comm.send();
+            bsp_sync();
+            comm.recv();
+        }
+        #pragma omp barrier
 
-	 }
-	 
+    }
+
     bsp_end();
 }
 

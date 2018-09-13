@@ -49,7 +49,8 @@ public:
     std::string serialize(void);
 
     /********************/
-    void show(void){
+    void show(void)
+    {
         std::cout << this->_time[0] << " " << this->_time[1] << " ";
         std::cout << this->_src[0] << " " << this->_src[1] << " ";
         std::cout << this->_dst[0] << " " << this->_dst[1] << std::endl;

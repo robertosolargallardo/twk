@@ -17,7 +17,7 @@ public:
         this->_lvt=_event->time(EXECUTION);
 
         this->processed(_event);
-std::cout << this->_processed.disp() << std::endl;
+        std::cout << this->_processed.disp() << std::endl;
 
         if(this->_sstep<_event->sstep())
             this->_sstep=_event->sstep();

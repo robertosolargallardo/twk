@@ -27,10 +27,10 @@ event::event(const event &_event)
 }
 event::event(const json &_jevent)
 {
-    this->_time={_jevent["time"][0].get<double>(),_jevent["time"][1].get<double>()};
+    this->_time= {_jevent["time"][0].get<double>(),_jevent["time"][1].get<double>()};
     this->_sstep=_jevent["sstep"].get<double>();
-    this->_src={_jevent["src"][0].get<int>(),_jevent["src"][1].get<int>()};
-    this->_dst={_jevent["dst"][0].get<int>(),_jevent["dst"][1].get<int>()};
+    this->_src= {_jevent["src"][0].get<int>(),_jevent["src"][1].get<int>()};
+    this->_dst= {_jevent["dst"][0].get<int>(),_jevent["dst"][1].get<int>()};
     this->_data=_jevent["data"];
 }
 event& event::operator=(const event &_event)
@@ -59,27 +59,33 @@ json event::data(void) const
 {
     return(this->_data);
 }
-std::string event::serialize(void){
-	json jevent;
-   jevent["time"]={this->_time[0],this->_time[1]};
-   jevent["sstep"]=this->_sstep;
-   jevent["src"]={this->_src[0],this->_src[1]};
-   jevent["dst"]={this->_dst[0],this->_dst[1]};
-   jevent["data"]=this->_data;
-	return(jevent.dump());
+std::string event::serialize(void)
+{
+    json jevent;
+    jevent["time"]= {this->_time[0],this->_time[1]};
+    jevent["sstep"]=this->_sstep;
+    jevent["src"]= {this->_src[0],this->_src[1]};
+    jevent["dst"]= {this->_dst[0],this->_dst[1]};
+    jevent["data"]=this->_data;
+    return(jevent.dump());
 }
-double event::sstep(void) const{
-	return(this->_sstep);
+double event::sstep(void) const
+{
+    return(this->_sstep);
 }
-void event::sstep(const double &_sstep){
-	this->_sstep=_sstep;
+void event::sstep(const double &_sstep)
+{
+    this->_sstep=_sstep;
 }
-double event::time(const int &_type) const{
-	return(this->_time[_type]);
+double event::time(const int &_type) const
+{
+    return(this->_time[_type]);
 }
-int event::src(const int &_type) const{
-	return(this->_src[_type]);
+int event::src(const int &_type) const
+{
+    return(this->_src[_type]);
 }
-int event::dst(const int &_type) const{
-	return(this->_dst[_type]);
+int event::dst(const int &_type) const
+{
+    return(this->_dst[_type]);
 }
