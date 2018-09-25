@@ -9,9 +9,8 @@ class lp
 protected:
     double _lvt;
     double _sstep;
-    evlist _processed;
-    evlist _sent;
 
+    std::shared_ptr<evlist> _processed;
     std::shared_ptr<evlist>       _evl;
     std::shared_ptr<communicator> _comm;
 
@@ -25,14 +24,12 @@ public:
     virtual void cause(const std::shared_ptr<event>&)=0;
 
     void processed(const std::shared_ptr<event>&);
-    void sent(const std::shared_ptr<event>&);
-
-    evlist processed(void) const;
-    evlist sent(void) const;
+    std::shared_ptr<evlist> processed(void) const;
 
     double lvt(void) const;
     void lvt(const double&);
 
     void sstep(const double&);
+    void restore(const std::shared_ptr<event>&);
 };
 #endif

@@ -23,6 +23,8 @@ public:
     void pop(void);
     bool empty(void);
     void move(const int&);
+    void remove(const int&);
+    void remove(const std::shared_ptr<event>&);
     int less_than(const double&);
 
     int disp(void) const

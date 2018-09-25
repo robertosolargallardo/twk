@@ -48,7 +48,6 @@ void simulator::run(const int &_k)
             if(this->_lps[name]->lvt()>e->time(EXECUTION))
                 {
                     this->rollback(name,e->time(EXECUTION));
-                    //exit(0);
                 }
             else
                 {
@@ -68,26 +67,67 @@ int simulator::tid(void) const
 }
 void simulator::rollback(const std::string &_name,const double &_time)
 {
-    std::cout << "rollback " << _time <<std::endl;
+    this->_toroll.push_back(_name);
 
-    int position=this->_lps[_name]->processed().less_than(_time);
-    std::cout << position << std::endl;
+    int N=this->_toroll.size();
 
-    exit(0);
+    for(int i=0; i<N; ++i)
+        {
+            int position=this->_lps[this->_toroll[i]]->processed()->less_than(_time);
+            this->rollback(std::string(this->_toroll[i]),position);
+            N=this->_toroll.size();
+        }
 
-    /*evlist::evlist_t::iterator it=this->_lps[_name]->processed().begin();
-
-    for(;it!=this->_lps[_name]->processed().end();++it)
-    	if((*it)->time()[1]<_time) break;*/
+    this->_toroll.clear();
 }
-void simulator::rollback(const std::string &_name,const evlist::evlist_t::iterator &_it)
+bool simulator::local(const std::shared_ptr<event> &_e)
 {
-    /*if((*_it)==nullptr){
-    	this->_lps[_name]->lvt(0.0);
-    	this->_lps[_name]->sstep(0.0);
-    }
-    else{
-    	this->_lps[_name]->lvt((*_it)->time()[1]);
-    	this->_lps[_name]->sstep((*_it)->sstep());
-    }*/
+    return(_e->dst(PID)==this->_pid && _e->dst(TID)==this->_tid);
+}
+void simulator::rollback(const std::string &_name,int &_position)
+{
+    this->_lps[_name]->processed()->move(_position);
+    auto e=this->_lps[_name]->processed()->top();
+
+    this->_lps[_name]->restore(e);
+
+    this->_lps[_name]->processed()->move(++_position);
+    e=this->_lps[_name]->processed()->top();
+
+    while(e!=nullptr)
+        {
+            for(auto c : e->children())
+                {
+                    if(!c->processed())
+                        {
+                            if(this->local(c))
+                                {
+                                    this->_evl->remove(c);
+                                }
+                            else
+                                {
+                                	   std::shared_ptr<event> a=std::make_shared<event>(*c);
+												a->time(EXECUTION,-a->time(EXECUTION));
+                                    this->_comm->send(a);
+                                }
+                        }
+                    else
+                        {
+                            std::string name=c->data()["name"].get<std::string>();
+                            if(name!=_name)
+                                {
+                                    if(std::count(this->_toroll.begin(),this->_toroll.end(),name)==0)
+                                        {
+                                            this->_toroll.push_back(name);
+                                        }
+                                }
+                        }
+                }
+            e->children().clear();
+            e->processed(false);
+            this->_evl->push(e);
+
+            this->_lps[_name]->processed()->remove(_position);
+            e=this->_lps[_name]->processed()->top();
+        }
 }

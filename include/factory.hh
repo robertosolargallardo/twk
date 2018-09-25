@@ -11,13 +11,12 @@ public:
     }
     void cause(const std::shared_ptr<event> &_event)
     {
-//std::cout << _event->data()["name"].dump() << std::endl;
         static thread_local std::mt19937 rng(time(0));
 
         this->_lvt=_event->time(EXECUTION);
 
+        _event->processed(true);
         this->processed(_event);
-        std::cout << this->_processed.disp() << std::endl;
 
         if(this->_sstep<_event->sstep())
             this->_sstep=_event->sstep();
@@ -38,7 +37,6 @@ public:
         else
             {
                 child->sstep(child->sstep()+1.0);
-                this->sent(child);
                 this->_comm->send(child);
             }
     }

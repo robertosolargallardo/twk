@@ -7,6 +7,7 @@ event::event(void)
     this->_sstep=0.0;
     this->_src= {0,0};
     this->_dst= {0,0};
+    this->_processed=false;
 }
 event::event(const double &_current_time,const double &_time,const double &_sstep,const int &_src_pid,const int &_src_tid,const int &_dst_pid,const int &_dst_tid,const json &_data)
 {
@@ -15,6 +16,7 @@ event::event(const double &_current_time,const double &_time,const double &_sste
     this->_src= {_src_pid,_src_tid};
     this->_dst= {_dst_pid,_dst_tid};
     this->_data=_data;
+    this->_processed=false;
 }
 event::event(const event &_event)
 {
@@ -24,6 +26,7 @@ event::event(const event &_event)
     this->_dst=_event._dst;
     this->_data=_event._data;
     this->_children=_event._children;
+    this->_processed=_event._processed;
 }
 event::event(const json &_jevent)
 {
@@ -32,6 +35,7 @@ event::event(const json &_jevent)
     this->_src= {_jevent["src"][0].get<int>(),_jevent["src"][1].get<int>()};
     this->_dst= {_jevent["dst"][0].get<int>(),_jevent["dst"][1].get<int>()};
     this->_data=_jevent["data"];
+    this->_processed=false;
 }
 event& event::operator=(const event &_event)
 {
@@ -41,6 +45,7 @@ event& event::operator=(const event &_event)
     this->_dst=_event._dst;
     this->_data=_event._data;
     this->_children=_event._children;
+    this->_processed=_event._processed;
     return(*this);
 }
 event::~event(void)
@@ -51,7 +56,7 @@ void event::child(const std::shared_ptr<event> &_event)
 {
     this->_children.insert(_event);
 }
-std::set<std::shared_ptr<event>,event::compare> event::children(void)
+std::set<std::shared_ptr<event>,event::compare>& event::children(void)
 {
     return(this->_children);
 }
@@ -77,6 +82,9 @@ void event::sstep(const double &_sstep)
 {
     this->_sstep=_sstep;
 }
+void event::time(const int &_type,const double &_value){
+	this->_time[_type]=_value;
+}
 double event::time(const int &_type) const
 {
     return(this->_time[_type]);
@@ -88,4 +96,10 @@ int event::src(const int &_type) const
 int event::dst(const int &_type) const
 {
     return(this->_dst[_type]);
+}
+bool event::processed(void) const{
+	return(this->_processed);
+}
+void event::processed(const bool &_processed){
+   this->_processed=_processed;
 }

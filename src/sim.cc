@@ -4,7 +4,31 @@
 #include <evlist.hh>
 #define NUMBER_OF_LPS   16
 #define MESSAGE_DENSITY 32
+void test_evl(void)
+{
+    json data;
+    evlist evl;
+    evl.push(std::make_shared<event>(0.0,1.2,0.0,0,0,1,1,data));
+    evl.push(std::make_shared<event>(0.0,5.3,0.0,0,0,1,1,data));
+    evl.push(std::make_shared<event>(0.0,3.4,0.0,0,0,1,1,data));
+    evl.push(std::make_shared<event>(0.0,4.5,0.0,0,0,1,1,data));
+    evl.push(std::make_shared<event>(0.0,0.5,0.0,0,0,1,1,data));
+    evl.push(std::make_shared<event>(0.0,0.4,0.0,0,0,1,1,data));
 
+    std::cout << "_________" << std::endl;
+    evl.show();
+
+    evl.move(2);
+    evl.remove(2);
+    evl.remove(2);
+    evl.remove(2);
+
+    std::cout << "_________" << std::endl;
+    evl.show();
+    std::cout << "_________" << std::endl;
+    //std::cout << "top " << e->time(EXECUTION) << std::endl;
+
+}
 void spmd(void)
 {
     bsp_begin(bsp_nprocs());
@@ -35,7 +59,8 @@ void spmd(void)
             }
         int k=MESSAGE_DENSITY/2+1;
 
-        for(int i=0; i<10; ++i)
+
+        for(int i=0; i<4; ++i)
             {
                 #pragma omp barrier
                 #pragma omp master
@@ -52,7 +77,6 @@ void spmd(void)
 
     bsp_end();
 }
-void test_evl(void);
 void test_comm(void);
 
 int main(int argc,char **argv)
@@ -69,40 +93,7 @@ int main(int argc,char **argv)
 
     return(0);
 }
-void test_evl(void)
-{
-    json data;
-    evlist evl;
-    evl.push(std::make_shared<event>(0.0,1.2,0.0,0,0,1,1,data));
-    evl.push(std::make_shared<event>(0.0,5.3,0.0,0,0,1,1,data));
-    evl.push(std::make_shared<event>(0.0,3.4,0.0,0,0,1,1,data));
-    evl.push(std::make_shared<event>(0.0,4.5,0.0,0,0,1,1,data));
 
-    auto e=evl.top();
-
-    std::cout << "top " << e->time(EXECUTION) << std::endl;
-
-    evl.pop();
-
-    e=evl.top();
-
-    e->child(std::make_shared<event>(0.0,5.3,0.0,0,0,1,1,data));
-    e->child(std::make_shared<event>(0.0,7.2,0.0,0,0,1,1,data));
-    e->child(std::make_shared<event>(0.0,7.1,0.0,0,0,1,1,data));
-
-    std::cout << "top " << e->time(EXECUTION) << std::endl;
-
-    evl.pop();
-    evl.pop();
-    evl.pop();
-
-    e=evl.top();
-
-    std::cout << "top " << (e==nullptr) << std::endl;
-
-    evl.show();
-
-}
 void test_comm(void)
 {
     bsp_begin(bsp_nprocs());

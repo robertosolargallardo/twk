@@ -9,6 +9,7 @@ extern "C" {
 
 #include <set>
 #include <map>
+#include <list>
 #include <array>
 #include <chrono>
 #include <memory>

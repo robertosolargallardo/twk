@@ -27,7 +27,7 @@ private:
     json                 _data;
 
     std::set<std::shared_ptr<event>,compare> _children;
-
+    bool _processed;
 
 public:
     event(void);
@@ -38,15 +38,19 @@ public:
     ~event(void);
 
     double time(const int&) const;
+    void time(const int&,const double&);
     int src(const int&) const;
     int dst(const int&) const;
     double sstep(void) const;
     void sstep(const double&);
 
     void child(const std::shared_ptr<event>&);
-    std::set<std::shared_ptr<event>,compare> children(void);
+    std::set<std::shared_ptr<event>,compare>& children(void);
     json data(void) const;
     std::string serialize(void);
+
+    bool processed(void) const;
+    void processed(const bool&);
 
     /********************/
     void show(void)

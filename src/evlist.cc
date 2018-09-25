@@ -26,7 +26,7 @@ void evlist::push(const std::shared_ptr<event> &_event)
 }
 std::shared_ptr<event> evlist::top(void)
 {
-    if(this->_disp==this->_list.size())
+    if(this->empty())
         return(nullptr);
 
     evlist_t::iterator it=this->_list.begin();
@@ -39,27 +39,39 @@ void evlist::pop(void)
 }
 bool evlist::empty(void)
 {
-    if(this->_list.empty() || this->_disp==this->_list.size())
+    if(this->_list.empty() || this->_disp>=this->_list.size())
         return(true);
     return(false);
 }
-void evlist::move(const int &_distance)
+void evlist::move(const int &_disp)
 {
-    this->_disp+=_distance;
+    this->_disp=_disp;
+}
+void evlist::remove(const std::shared_ptr<event> &_e)
+{
+    auto it=this->_list.find(_e);
+    this->remove(std::distance(this->_list.begin(),it));
+}
+void evlist::remove(const int &_position)
+{
+    if(_position==this->_list.size())
+        return;
+
+    evlist_t::iterator it=this->_list.begin();
+    std::advance(it,_position);
+
+    this->_list.erase(it);
+
+    if(_position<this->_disp)
+        --this->_disp;
 }
 int evlist::less_than(const double &_time)
 {
-    std::cout << this->_list.size() << std::endl;
-    std::cout << this->_disp << std::endl;
-    exit(0);
     int position=this->_disp;
     evlist_t::iterator it=this->_list.begin();
     std::advance(it,this->_disp);
 
-    for(; it!=this->_list.end() && (*it)->time(EXECUTION)<_time; ++it,++position)
-        {
-            std::cout << (*it)->time(EXECUTION) << std::endl;
-        }
+    for(; it!=this->_list.end() && (*it)->time(EXECUTION)<_time; ++it,++position);
 
     return(--position);
 }

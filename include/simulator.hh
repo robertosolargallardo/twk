@@ -16,6 +16,8 @@ private:
 
     std::shared_ptr<communicator> _comm;
 
+    std::vector<std::string> _toroll;
+
 public:
     simulator(void);
     simulator(const std::shared_ptr<communicator>&);
@@ -29,6 +31,8 @@ public:
 
 private:
     void rollback(const std::string&,const double&);
-    void rollback(const std::string&,const evlist::evlist_t::iterator&);
+    void rollback(const std::string&,int&);
+
+    bool local(const std::shared_ptr<event>&);
 };
 #endif
