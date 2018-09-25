@@ -106,8 +106,8 @@ void simulator::rollback(const std::string &_name,int &_position)
                                 }
                             else
                                 {
-                                	   std::shared_ptr<event> a=std::make_shared<event>(*c);
-												a->time(EXECUTION,-a->time(EXECUTION));
+                                    std::shared_ptr<event> a=std::make_shared<event>(*c);
+                                    a->time(EXECUTION,-a->time(EXECUTION));
                                     this->_comm->send(a);
                                 }
                         }

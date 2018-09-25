@@ -82,8 +82,9 @@ void event::sstep(const double &_sstep)
 {
     this->_sstep=_sstep;
 }
-void event::time(const int &_type,const double &_value){
-	this->_time[_type]=_value;
+void event::time(const int &_type,const double &_value)
+{
+    this->_time[_type]=_value;
 }
 double event::time(const int &_type) const
 {
@@ -97,9 +98,11 @@ int event::dst(const int &_type) const
 {
     return(this->_dst[_type]);
 }
-bool event::processed(void) const{
-	return(this->_processed);
+bool event::processed(void) const
+{
+    return(this->_processed);
 }
-void event::processed(const bool &_processed){
-   this->_processed=_processed;
+void event::processed(const bool &_processed)
+{
+    this->_processed=_processed;
 }

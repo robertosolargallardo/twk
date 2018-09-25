@@ -86,12 +86,14 @@ void communicator::pull(const int &_tid,const std::shared_ptr<evlist> &_evl)
 {
     while(!this->_input[_tid].empty())
         {
-            if(this->_input[_tid].back()->time(EXECUTION)<0.0){
-                std::cout<< "antimensaje" <<std::endl;
-            } 
-            else{
-                _evl->push(this->_input[_tid].back());
-            }
+            if(this->_input[_tid].back()->time(EXECUTION)<0.0)
+                {
+                    std::cout<< "antimensaje" <<std::endl;
+                }
+            else
+                {
+                    _evl->push(this->_input[_tid].back());
+                }
             this->_input[_tid].pop_back();
         }
 }
