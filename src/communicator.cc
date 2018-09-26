@@ -82,13 +82,14 @@ void communicator::recv(void)
             free(buffer);
         }
 }
-void communicator::pull(const int &_tid,const std::shared_ptr<evlist> &_evl)
+std::vector<std::shared_ptr<event>> communicator::pull(const int &_tid,const std::shared_ptr<evlist> &_evl)
 {
+    std::vector<std::shared_ptr<event>> antimessages;
     while(!this->_input[_tid].empty())
         {
             if(this->_input[_tid].back()->time(EXECUTION)<0.0)
                 {
-                    std::cout<< "antimensaje" <<std::endl;
+                    antimessages.push_back(this->_input[_tid].back());
                 }
             else
                 {
@@ -96,4 +97,6 @@ void communicator::pull(const int &_tid,const std::shared_ptr<evlist> &_evl)
                 }
             this->_input[_tid].pop_back();
         }
+    std::sort(antimessages.begin(),antimessages.end(),[](const std::shared_ptr<event> &a,const std::shared_ptr<event> &b)->bool{return(a->time(EXECUTION)<b->time(EXECUTION));});
+    return(antimessages);
 }

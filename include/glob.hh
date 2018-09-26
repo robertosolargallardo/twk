@@ -16,6 +16,7 @@ extern "C" {
 #include <algorithm>
 #include <nlohmann/json.hpp>
 #include <omp.h>
+#include <float.h>
 
 using json=nlohmann::json;
 

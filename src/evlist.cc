@@ -49,7 +49,7 @@ void evlist::move(const int &_disp)
 }
 void evlist::remove(const std::shared_ptr<event> &_e)
 {
-    auto it=this->_list.find(_e);
+    auto it=std::find_if(this->_list.begin(),this->_list.end(),[&_e](const std::shared_ptr<event> &_i)->bool{return((*_i)==(*_e));});
     this->remove(std::distance(this->_list.begin(),it));
 }
 void evlist::remove(const int &_position)
@@ -67,9 +67,10 @@ void evlist::remove(const int &_position)
 }
 int evlist::less_than(const double &_time)
 {
-    int position=this->_disp;
+    //int position=this->_disp;
+    int position=0;
     evlist_t::iterator it=this->_list.begin();
-    std::advance(it,this->_disp);
+    //std::advance(it,this->_disp);
 
     for(; it!=this->_list.end() && (*it)->time(EXECUTION)<_time; ++it,++position);
 

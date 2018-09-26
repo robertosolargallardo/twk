@@ -52,6 +52,8 @@ public:
     bool processed(void) const;
     void processed(const bool&);
 
+    friend bool operator==(const event&,const event&);
+
     /********************/
     void show(void)
     {

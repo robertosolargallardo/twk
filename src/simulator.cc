@@ -35,7 +35,21 @@ simulator::~simulator(void)
 void simulator::run(const int &_k)
 {
     int k=0;
-    this->_comm->pull(this->tid(),this->_evl);
+    auto antimessages=this->_comm->pull(this->tid(),this->_evl);
+
+    if(!antimessages.empty())
+        {
+            for(auto a : antimessages)
+                {
+                    a->time(EXECUTION,-a->time(EXECUTION));
+                    std::string name=a->data()["name"].get<std::string>();
+                    if(this->_lps.count(name)==0 || this->_lps[name]->lvt()>a->time(EXECUTION))
+                        this->_evl->remove(a);
+                    else
+                        this->rollback(name,a->time(EXECUTION));
+                }
+            antimessages.clear();
+        }
 
     while(k<_k && !this->_evl->empty())
         {
@@ -77,7 +91,6 @@ void simulator::rollback(const std::string &_name,const double &_time)
             this->rollback(std::string(this->_toroll[i]),position);
             N=this->_toroll.size();
         }
-
     this->_toroll.clear();
 }
 bool simulator::local(const std::shared_ptr<event> &_e)
@@ -106,9 +119,8 @@ void simulator::rollback(const std::string &_name,int &_position)
                                 }
                             else
                                 {
-                                    std::shared_ptr<event> a=std::make_shared<event>(*c);
-                                    a->time(EXECUTION,-a->time(EXECUTION));
-                                    this->_comm->send(a);
+                                    c->time(EXECUTION,-c->time(EXECUTION));
+                                    this->_comm->send(c);
                                 }
                         }
                     else

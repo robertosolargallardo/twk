@@ -59,8 +59,7 @@ void spmd(void)
             }
         int k=MESSAGE_DENSITY/2+1;
 
-
-        for(int i=0; i<4; ++i)
+        for(int i=0; i<100; ++i)
             {
                 #pragma omp barrier
                 #pragma omp master

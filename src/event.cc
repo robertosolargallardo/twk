@@ -106,3 +106,7 @@ void event::processed(const bool &_processed)
 {
     this->_processed=_processed;
 }
+bool operator==(const event &_a,const event &_b)
+{
+    return(_a._time==_b._time && _a._sstep==_b._sstep && _a._src==_b._src && _a._dst==_b._dst && _a._data==_b._data);
+}

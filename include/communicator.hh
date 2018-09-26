@@ -24,6 +24,6 @@ public:
     void send(const std::shared_ptr<event>&);
     void send(void);
     void recv(void);
-    void pull(const int&,const std::shared_ptr<evlist>&);
+    std::vector<std::shared_ptr<event>> pull(const int&,const std::shared_ptr<evlist>&);
 };
 #endif
